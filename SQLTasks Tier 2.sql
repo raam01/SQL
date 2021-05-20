@@ -102,6 +102,21 @@ ORDER BY `cost` DESC
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
 
+SELECT sub.name, 
+CASE WHEN sub.memid != 0 THEN CONCAT(sub.firstname, ' ', sub.surname) ELSE sub.firstname END AS name, 
+CASE WHEN sub.memid != 0 THEN sub.slots * sub.membercost
+     ELSE sub.slots * sub.guestcost END AS cost
+FROM (SELECT *
+      FROM Bookings AS b
+      INNER JOIN Members AS m
+      USING (memid)
+      INNER JOIN Facilities AS f
+      USING (facid)) AS sub
+WHERE starttime BETWEEN '2012-09-14 00:00:00' AND '2012-09-14 23:59:59' AND
+CASE WHEN memid != 0 THEN slots * membercost
+     ELSE slots * guestcost
+END > 30
+ORDER BY cost DESC;
 
 /* PART 2: SQLite
 
